@@ -1,51 +1,62 @@
+import { Editor } from "@monaco-editor/react";
 import Navbar from "../components/Navbar";
-//import { useState } from "react";
-//import { post } from "../lib/api";
-//import { ThreeDots } from "react-loader-spinner";
-import DafnyEditor from "../components/DafnyEditor";
+import { useState } from "react";
+import { post } from "../lib/api";
+import { ThreeDots } from "react-loader-spinner";
 
-export default function CFGgen() {
-    /*
-    const [code, setCode] = useState("// Please enter Java code below and delete this comment!");
-    const handleEditorChange = (value: string | undefined) => {
-        if (value) {
-          //console.log(value);
-          setCode(value);
-          //console.log(code);
-        }
-      };
-    const handleCFGGen=()=>{
-        //setLoading(true);
-        //post("http://localhost:3000/createCFG", code).then((response) => {
-            
-        }
-        //setLoading(false);
-        //setData(response);
-      })
+//Create Routing File
+interface ErrorObject {
+  fileName: string;
+  line: number;
+  column: number;
+  errorMessage: string;
+}
+
+export default function CFGGen() {
+  const [code, setCode] = useState("int main(){}");
+  const [loading, setLoading] = useState(false);
+
+  const handleGen = () => {
+    setLoading(true);
+    post("http://localhost:3000/fetchImage/CFG.jpeg", code);
+    setLoading(false);
+  };
+
+  const handleEditorChange = (value: string | undefined) => {
+    if (value) {
+      //console.log(value);
+      setCode(value);
+      //console.log(code);
     }
-      */
-    return(
-        <>
-    
-            <div>
-            
-    
-                <div>
-                    <Navbar/>
-                </div>
-                <div style={{ width: "50%", justifyContent: "left" }}>
+  };
+  //<img src="http://localhost:3000/fetchImage/CFG.jpeg" alt="CFG image here"></img>
+  return (
+    <div>
+      <div>
+        <Navbar />
+      </div>
+      <div
+        className="screen"
+        style={{ paddingTop: "50px", width: "100%", overflow: "hidden" }}
+      >
+        <div style={{ width: "50%", justifyContent: "left" }}>
 
-                    <DafnyEditor
-                    EditorProps={{
-                        height: "92vh",
-                        width: "50vw",
-                        //onChange: handleEditorChange,
-                        defaultLanguage: "dafny",
-                        }}
-                    />
-                </div>
-            </div>
-        </>
-
-    )
+          <Editor height="92vh" width="50vw" onChange={handleEditorChange} defaultLanguage="c"
+            defaultValue='int main(){return 1;}// Use C/C++ code'/>
+        </div>
+        <div className="flex flex-col justify-center relative pl-8">
+          <div className=" flex-grow">
+            {loading ? (
+              <ThreeDots color="gray" height={100} width={100} />
+            ) : (
+              <img src="http://localhost:3000/fetchImage/CFG.jpeg" alt="CFG image here"></img>
+            )}
+          </div>
+          <div className="flex flex-row justify-evenly max-h-11 mb-4">
+            <button onClick={handleGen}>Generate CFG</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
